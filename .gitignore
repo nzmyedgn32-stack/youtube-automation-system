@@ -1,0 +1,18 @@
+# .gitignore
+
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+config/settings.yaml
+.DS_Store
+.pytest_cache/
+*.log
+node_modules/
+coverage/
+
+# Output files
+/data/output/
+/data/assets/

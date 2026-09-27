@@ -1,0 +1,34 @@
+# Example settings
+
+app:
+  name: youtube-automation-system
+  env: development
+  log_level: INFO
+
+api:
+  openai: "${OPENAI_API_KEY}"
+  youtube_client_id: "${YOUTUBE_CLIENT_ID}"
+  youtube_client_secret: "${YOUTUBE_CLIENT_SECRET}"
+  youtube_refresh_token: "${YOUTUBE_REFRESH_TOKEN}"
+  google_api_key: "${GOOGLE_API_KEY}"
+  elevenlabs_api_key: "${ELEVENLABS_API_KEY}"
+
+paths:
+  base_output_dir: "./data/output"
+  asset_dir: "./data/assets"
+  script_dir: "./data/scripts"
+  topic_dir: "./data/topics"
+
+video:
+  default_duration_seconds: 300
+  fps: 30
+  width: 1920
+  height: 1080
+
+youtube:
+  privacy_status: "private"
+  category_id: "22"
+
+schedule:
+  enabled: true
+  cron: "0 9 * * *"
