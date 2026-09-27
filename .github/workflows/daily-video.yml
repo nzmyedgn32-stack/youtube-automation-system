@@ -16,6 +16,9 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -36,8 +39,6 @@ jobs:
           file data/output/*.mp4 data/output/*.mp3 || true
           echo "== video probe =="
           ffprobe -v error -show_format -show_streams data/output/*.mp4 2>&1 || true
-          echo "== ses probe =="
-          ffprobe -v error -show_format -show_streams data/output/*.mp3 2>&1 || true
 
       - name: Upload video artifact
         if: always()
