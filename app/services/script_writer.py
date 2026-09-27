@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-import google.generativeai as genai
+from google import genai
 
 from app.config import settings
 
@@ -10,16 +10,16 @@ from app.config import settings
 class ScriptWriterService:
     def __init__(self) -> None:
         if settings.google_api_key:
-            genai.configure(api_key=settings.google_api_key)
-            self.model = genai.GenerativeModel("gemini-1.5-flash")
+            self.client = genai.Client(api_key=settings.google_api_key)
         else:
-            self.model = None
+            self.client = None
+        self.model_name = "gemini-flash-latest"
 
     def generate_titles(self, topics: List[str]) -> List[str]:
         if not topics:
             return ["AI ile içerik üretimi"]
 
-        if self.model is None:
+        if self.client is None:
             return [f"{topic} için 7 adım" for topic in topics]
 
         try:
@@ -29,14 +29,14 @@ class ScriptWriterService:
                 "Sadece başlığı yaz, tırnak işareti veya başka bir şey ekleme.\n\n"
                 "Konular: " + ", ".join(topics)
             )
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             title = response.text.strip().strip('"')
             return [title] if title else [f"{topics[0]} için 7 adım"]
         except Exception:
             return [f"{topic} için 7 adım" for topic in topics]
 
     def generate_script(self, title: str) -> str:
-        if self.model is None:
+        if self.client is None:
             return (
                 f"Merhaba! Bu videoda {title} konusunu anlatacağım. "
                 "Önce temel fikri açıklayacağız, sonra adım adım uygulamayı göreceğiz. "
@@ -49,7 +49,7 @@ class ScriptWriterService:
                 "akıcı ve samimi bir Türkçe anlatım metni yaz. Sadece konuşma "
                 "metnini yaz, başlık, yönerge veya emoji ekleme."
             )
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             return response.text.strip()
         except Exception:
             return (
