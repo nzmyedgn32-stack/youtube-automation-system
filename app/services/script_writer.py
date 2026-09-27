@@ -32,7 +32,8 @@ class ScriptWriterService:
             response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             title = response.text.strip().strip('"')
             return [title] if title else [f"{topics[0]} için 7 adım"]
-        except Exception:
+        except Exception:        except Exception as e:
+            print(f"GEMINI HATASI: {e}")
             return [f"{topic} için 7 adım" for topic in topics]
 
     def generate_script(self, title: str) -> str:
@@ -51,7 +52,8 @@ class ScriptWriterService:
             )
             response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             return response.text.strip()
-        except Exception:
+        except Exception:        except Exception as e:
+            print(f"GEMINI HATASI: {e}")
             return (
                 f"Merhaba! Bu videoda {title} konusunu anlatacağım. "
                 "Önce temel fikri açıklayacağız, sonra adım adım uygulamayı göreceğiz. "
