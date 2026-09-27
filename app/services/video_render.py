@@ -22,6 +22,11 @@ class VideoRenderService:
             output_path.write_bytes(b"placeholder-video")
             return str(output_path)
 
+        background = (
+            f"gradients=size=1920x1080:duration={duration}:speed=0.02:"
+            "x0=100:y0=100:x1=900:y1=900:c0=0x111827:c1=0x1e3a5f"
+        )
+
         drawtext_filter = (
             "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:"
             f"text='{safe_title}':fontcolor=white:fontsize=52:x=(w-text_w)/2:y=(h-text_h)/2"
@@ -31,7 +36,7 @@ class VideoRenderService:
             ffmpeg,
             "-y",
             "-f", "lavfi",
-            "-i", f"color=c=0x111827:s=1920x1080:d={duration}",
+            "-i", background,
         ]
 
         audio_input = audio_file
