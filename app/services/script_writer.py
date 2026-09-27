@@ -20,6 +20,7 @@ class ScriptWriterService:
             return ["AI ile içerik üretimi"]
 
         if self.client is None:
+            print("GEMINI HATASI: google_api_key bos (client None)")
             return [f"{topic} için 7 adım" for topic in topics]
 
         try:
@@ -32,7 +33,7 @@ class ScriptWriterService:
             response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             title = response.text.strip().strip('"')
             return [title] if title else [f"{topics[0]} için 7 adım"]
-        except Exception:        except Exception as e:
+        except Exception as e:
             print(f"GEMINI HATASI: {e}")
             return [f"{topic} için 7 adım" for topic in topics]
 
@@ -52,7 +53,7 @@ class ScriptWriterService:
             )
             response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             return response.text.strip()
-        except Exception:        except Exception as e:
+        except Exception as e:
             print(f"GEMINI HATASI: {e}")
             return (
                 f"Merhaba! Bu videoda {title} konusunu anlatacağım. "
