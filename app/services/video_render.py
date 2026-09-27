@@ -22,22 +22,28 @@ class VideoRenderService:
             output_path.write_bytes(b"placeholder-video")
             return str(output_path)
 
-        audio_input = audio_file
+        drawtext_filter = (
+            "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:"
+            f"text='{safe_title}':fontcolor=white:fontsize=52:x=(w-text_w)/2:y=(h-text_h)/2"
+        )
+
         cmd = [
             ffmpeg,
             "-y",
             "-f", "lavfi",
             "-i", f"color=c=0x111827:s=1920x1080:d={duration}",
-            "-vf",
-            (
-                "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:"
-                f"text='{safe_title}':fontcolor=white:fontsize=52:x=(w-text_w)/2:y=(h-text_h)/2"
-            ),
         ]
 
-        if audio_input.endswith(".mp3") or audio_input.endswith(".wav"):
-            cmd.extend(["-i", audio_input])
-            cmd.extend(["-shortest", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", str(output_path)])
+        audio_input = audio_file
+        has_audio = audio_input.endswith(".mp3") or audio_input.endswith(".wav")
+
+        if has_audio:
+            cmd.extend(["-i", audio_input, "-shortest"])
+
+        cmd.extend(["-vf", drawtext_filter])
+
+        if has_audio:
+            cmd.extend(["-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", str(output_path)])
         else:
             cmd.extend(["-c:v", "libx264", "-pix_fmt", "yuv420p", str(output_path)])
 
