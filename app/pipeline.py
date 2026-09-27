@@ -18,15 +18,17 @@ class VideoAutomationPipeline:
     def run(self) -> dict:
         topics = self.trends_service.fetch_topics()
         titles = self.script_writer.generate_titles(topics)
-        script = self.script_writer.generate_script(titles[0])
-        audio_file = self.tts_service.generate_audio(script)
-        video_path = self.render_service.render_video(script, audio_file)
-        thumbnail_path = self.render_service.create_thumbnail(video_path)
-        upload_result = self.uploader_service.upload(video_path, thumbnail_path, script)
+        selected_title = titles[0] if titles else "AI ile otomasyon"
+        script = self.script_writer.generate_script(selected_title)
+        audio_file = self.tts_service.generate_audio(script, selected_title)
+        video_path = self.render_service.render_video(selected_title, audio_file)
+        thumbnail_path = self.render_service.create_thumbnail(selected_title)
+        upload_result = self.uploader_service.upload(video_path, thumbnail_path, selected_title, script)
         metrics = self.analytics_service.fetch_metrics(upload_result.get("video_id"))
         return {
             "topics": topics,
             "titles": titles,
+            "selected_title": selected_title,
             "script": script,
             "audio_file": audio_file,
             "video_path": video_path,

@@ -1,0 +1,76 @@
+from __future__ import annotations
+
+import json
+from typing import List
+
+import requests
+
+from app.config import settings
+
+
+class ScriptWriterService:
+    def generate_titles(self, topics: List[str]) -> List[str]:
+        if settings.openai_api_key:
+            try:
+                prompt = (
+                    "YouTube için yüksek CTR ve yüksek izlenme potansiyeli olan 5 başlık üret. "
+                    "Başlıklar sadece tek satır olsun, numara ekleme."
+                    f"Konu listesi: {topics}"
+                )
+                payload = {
+                    "model": "gpt-4o-mini",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.8,
+                }
+                headers = {"Authorization": f"Bearer {settings.openai_api_key}", "Content-Type": "application/json"}
+                response = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=60,
+                )
+                response.raise_for_status()
+                data = response.json()
+                content = data["choices"][0]["message"]["content"]
+                titles = [line.strip(" -#0123456789. ") for line in content.splitlines() if line.strip()]
+                if titles:
+                    return titles[:5]
+            except Exception:
+                pass
+
+        return [f"{topic} için 7 adım" for topic in topics[:5]]
+
+    def generate_script(self, title: str) -> str:
+        if settings.openai_api_key:
+            try:
+                prompt = (
+                    "YouTube için etkili bir video scripti yaz. "
+                    "Format: kısa hook, açıklama, örnek, sonuç ve CTA. "
+                    "Türkçe yaz. Başlık: " + title
+                )
+                payload = {
+                    "model": "gpt-4o-mini",
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.7,
+                }
+                headers = {"Authorization": f"Bearer {settings.openai_api_key}", "Content-Type": "application/json"}
+                response = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=60,
+                )
+                response.raise_for_status()
+                data = response.json()
+                content = data["choices"][0]["message"]["content"]
+                if content:
+                    return content.strip()
+            except Exception:
+                pass
+
+        return (
+            f"Merhaba! Bu videoda {title} konusunu anlatacağım. "
+            "Önce temel fikri netleştireceğiz, sonra adım adım uygulayacağız. "
+            "Sonunda da pratik bir örnekle işi tamamlayacağız. "
+            "İzlediğiniz için teşekkür ederim ve kanalımıza abone olmanızı öneririm."
+        )

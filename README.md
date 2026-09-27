@@ -1,48 +1,26 @@
 # YouTube Automation System
 
-Bu repository, YouTube kanalı için otomatik video üretim sistemi kurmak için hazırlanmış modüler bir başlangıç altyapısıdır.
-
-## Amaç
-
-- Trend ve konu keşfi
-- Video başlığı ve script üretimi
-- Seslendirme (TTS)
-- Görsel ve thumbnail hazırlama
-- Video render işlemi
-- YouTube upload
-- Performans analizi
-
-## Mimarisi
-
-Proje, aşağıdaki modüllerden oluşur:
-
-- Trends: Trend ve konu üretimi
-- Script Writer: Başlık, açıklama ve script oluşturma
-- TTS: Seslendirme
-- Video Render: Görsel + ses + yazı + altyazı birleştirme
-- YouTube Uploader: YouTube upload ve yayınlanma
-- Analytics: İzlenme, CTR, retention analizi
+Bu repository, YouTube kanalı için otomatik video üretim sistemi kurmak için modüler bir başlangıç altyapısıdır.
 
 ## Hızlı başlangıç
 
 1. Sanal ortam oluştur
    ```bash
    python -m venv .venv
-   source .venv/bin/activate   # Linux/macOS
-   # .venv\Scripts\activate    # Windows
+   source .venv/bin/activate
    ```
 
-2. Bağımlılıkları kur
+2. Bağımlılıklar kur
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Ortam değişkenlerini tanımla
+3. Ortam değişkenleri hazırlanır
    ```bash
    cp .env.example .env
    ```
 
-4. Ayar dosyasını kontrol et
+4. Konfigürasyon dosyasını hazırla
    ```bash
    cp config/settings.yaml.example config/settings.yaml
    ```
@@ -52,69 +30,38 @@ Proje, aşağıdaki modüllerden oluşur:
    python -m app.pipeline
    ```
 
-## Dizin yapısı
+## Entegre edilen modüller
 
-```text
-.
-├── app/
-│   ├── __init__.py
-│   ├── config.py
-│   ├── pipeline.py
-│   └── services/
-│       ├── __init__.py
-│       ├── analytics.py
-│       ├── script_writer.py
-│       ├── trends.py
-│       ├── tts.py
-│       ├── video_render.py
-│       └── youtube_uploader.py
-├── config/
-│   ├── settings.yaml.example
-│   └── settings.yaml
-├── docs/
-│   ├── architecture.md
-│   └── workflow.md
-├── scripts/
-│   └── run_pipeline.sh
-├── .env.example
-├── .gitignore
-├── README.md
-├── requirements.txt
-└── .venv/
+- Google Trends / RSS tabanlı konu üretimi
+- OpenAI tabanlı başlık ve script üretimi
+- ElevenLabs tabanlı seslendirme
+- FFmpeg tabanlı video render
+- YouTube Data API tabanlı upload
+- Placeholder analytics çıktısı
+
+## Gerekli ortam değişkenleri
+
+```bash
+OPENAI_API_KEY=your_openai_api_key
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
+ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM
+GOOGLE_API_KEY=your_google_api_key
+YOUTUBE_CLIENT_ID=your_youtube_client_id
+YOUTUBE_CLIENT_SECRET=your_youtube_client_secret
+YOUTUBE_REFRESH_TOKEN=your_youtube_refresh_token
+BASE_OUTPUT_DIR=./data/output
+APP_ENV=development
+LOG_LEVEL=INFO
 ```
 
-## Güvenlik notu
-
-- API anahtarları `.env` dosyasında tutulmalıdır.
-- `.env` dosyası Git'e eklenmemelidir.
-
-## Geliştirme akışı
-
-1. Trendleri al
-2. Başlık ve konu üret
-3. Script yaz
-4. TTS ile ses üret
-5. Video render et
-6. Thumbnail oluştur
-7. YouTube upload et
-8. Performans analizi yap
-
-## Geliştirilecek adımlar
-
-- YouTube Data API entegrasyonu
-- Google Trends arama modülü
-- EleventLabs / Azure TTS bağlanması
-- FFmpeg render pipeline
-- Thumbnail üretimi ve otomatik upload
-- PostgreSQL veritabanı takibi
-- Dashboard ve raporlama
-
-## Örnek yayın akışı
+## İş akışı
 
 ```text
-Trendler -> Konu üretimi -> Başlık -> Script -> Görsel -> Ses -> Videolar -> Upload -> Analiz
+Trendler -> Başlık -> Script -> Ses -> Video -> Thumbnail -> Upload -> Analiz
 ```
 
-## Lisans
+## Notlar
 
-Bu proje eğitim ve prototip amaçlıdır.
+- YouTube upload için Google OAuth refresh token gereklidir.
+- FFmpeg sistemde kurulu olmalıdır.
+- API anahtarları `.env` içinde tutulmalıdır.
