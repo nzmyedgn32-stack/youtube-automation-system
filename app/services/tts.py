@@ -8,8 +8,9 @@ class TTSService:
         self.output_dir = Path("./data/output")
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def generate_audio(self, script: str) -> str:
-        output_path = self.output_dir / "voiceover.wav"
+    def generate_audio(self, script: str, title: str = "youtube-video") -> str:
+        safe_title = title.lower().replace(" ", "-")
+        output_path = self.output_dir / f"{safe_title}.wav"
         # TODO: Replace with ElevenLabs or Azure TTS integration.
         output_path.write_text("placeholder", encoding="utf-8")
         return str(output_path)
